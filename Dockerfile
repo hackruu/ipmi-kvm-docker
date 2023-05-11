@@ -1,17 +1,37 @@
-FROM ubuntu:14.04
+FROM --platform=linux/arm64 ubuntu:14.04
 MAINTAINER Kyle Anderson <kyle@xkyle.com>
 
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get -y install software-properties-common
-RUN add-apt-repository ppa:jonathonf/firefox-esr
+
+RUN dpkg --add-architecture armhf
+
 RUN apt-get update && apt-get -y install xvfb x11vnc wget \
-    supervisor fluxbox icedtea-7-plugin net-tools \
-    python-numpy firefox-esr=52.9.0esr-1~14.04.york0
+    supervisor fluxbox icedtea-7-plugin net-tools python-numpy \
+    libfile-basedir-perl libfile-desktopentry-perl libfile-mimeinfo-perl \
+    libgmp10 libisl10 libmpc3 libmpfr4 \
+    x11-xserver-utils xdg-utils libdbus-glib-1-2 \
+    libdbus-glib-1-2 libgnome-keyring0 cpp \
+    cpp-4.8 libcloog-isl4 libpulse0 libnspr4 \
+    libasound2 libstdc++6 libxss1 libxtst6 \
+    libxml2 libldap-2.4-2 libatk1.0-0 libcairo2 \
+    libcups2 libexpat1 libfontconfig1 libudev-dev \
+    libfreetype6 libgdk-pixbuf2.0-0 libgssapi-krb5-2 \
+    libgtk2.0-0 libk5crypto3 libkrb5-3 libnss3 \
+    libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 firefox
+
+
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+ADD deployment.properties /root/.config/icedtea-web/deployment.properties
+
 WORKDIR /root/
+RUN mkdir -p /root/images
 ADD novnc /root/novnc/
 
 ENV DISPLAY :0
+ENV RES 1024x768x24
 EXPOSE 8080
+EXPOSE 2000
+EXPOSE 2000/udp
+EXPOSE 8890/udp
 CMD ["/usr/bin/supervisord"]

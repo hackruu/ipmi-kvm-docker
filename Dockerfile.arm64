@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM --platform=linux/arm64 ubuntu:14.04
 MAINTAINER Kyle Anderson <kyle@xkyle.com>
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -8,34 +8,30 @@ RUN dpkg --add-architecture armhf
 RUN apt-get update && apt-get -y install xvfb x11vnc wget \
     supervisor fluxbox icedtea-7-plugin net-tools python-numpy \
     libfile-basedir-perl libfile-desktopentry-perl libfile-mimeinfo-perl \
-    libgmp10:armhf libisl10:armhf libmpc3:armhf libmpfr4:armhf \
-    x11-xserver-utils:armhf xdg-utils:armhf libdbus-glib-1-2:armhf \
-    libdbus-glib-1-2:armhf libgnome-keyring0:armhf cpp:armhf \
-    cpp-4.8:armhf libcloog-isl4:armhf libpulse0:armhf libnspr4:armhf \
-    libasound2:armhf libstdc++6:armhf libxss1:armhf libxtst6:armhf \
-    libxml2:armhf libldap-2.4-2:armhf libatk1.0-0:armhf libcairo2:armhf \
-    libcups2:armhf libexpat1:armhf libfontconfig1:armhf libudev-dev:armhf \
-    libfreetype6:armhf libgdk-pixbuf2.0-0:armhf libgssapi-krb5-2:armhf \
-    libgtk2.0-0:armhf libk5crypto3:armhf libkrb5-3:armhf libnss3:armhf \
-    libpango-1.0-0:armhf libpangocairo-1.0-0:armhf libpangoft2-1.0-0:armhf 
+    libgmp10 libisl10 libmpc3 libmpfr4 \
+    x11-xserver-utils xdg-utils libdbus-glib-1-2 \
+    libdbus-glib-1-2 libgnome-keyring0 cpp \
+    cpp-4.8 libcloog-isl4 libpulse0 libnspr4 \
+    libasound2 libstdc++6 libxss1 libxtst6 \
+    libxml2 libldap-2.4-2 libatk1.0-0 libcairo2 \
+    libcups2 libexpat1 libfontconfig1 libudev-dev \
+    libfreetype6 libgdk-pixbuf2.0-0 libgssapi-krb5-2 \
+    libgtk2.0-0 libk5crypto3 libkrb5-3 libnss3 \
+    libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 firefox
 
 
-ADD supervisord.conf.arm /etc/supervisor/conf.d/supervisord.conf
-
-RUN wget http://launchpadlibrarian.net/170877332/gconf-service-backend_3.2.6-0ubuntu2_armhf.deb
-RUN wget http://launchpadlibrarian.net/170877334/libgconf-2-4_3.2.6-0ubuntu2_armhf.deb
-RUN wget http://launchpadlibrarian.net/170876897/gconf2-common_3.2.6-0ubuntu2_all.deb
-RUN wget http://launchpadlibrarian.net/218525711/chromium-codecs-ffmpeg-extra_45.0.2454.85-0ubuntu0.14.04.1.1097_armhf.deb
-RUN wget http://launchpadlibrarian.net/170877331/gconf-service_3.2.6-0ubuntu2_armhf.deb
-RUN wget http://launchpadlibrarian.net/218525709/chromium-browser_45.0.2454.85-0ubuntu0.14.04.1.1097_armhf.deb
-
-RUN dpkg -i gconf-service-backend_3.2.6-0ubuntu2_armhf.deb libgconf-2-4_3.2.6-0ubuntu2_armhf.deb gconf2-common_3.2.6-0ubuntu2_all.deb chromium-codecs-ffmpeg-extra_45.0.2454.85-0ubuntu0.14.04.1.1097_armhf.deb gconf-service_3.2.6-0ubuntu2_armhf.deb chromium-browser_45.0.2454.85-0ubuntu0.14.04.1.1097_armhf.deb
+ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 ADD deployment.properties /root/.config/icedtea-web/deployment.properties
 
 WORKDIR /root/
+RUN mkdir -p /root/images
 ADD novnc /root/novnc/
 
 ENV DISPLAY :0
+ENV RES 1024x768x24
 EXPOSE 8080
+EXPOSE 2000
+EXPOSE 2000/udp
+EXPOSE 8890/udp
 CMD ["/usr/bin/supervisord"]
