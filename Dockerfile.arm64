@@ -1,5 +1,5 @@
 FROM --platform=linux/arm64 ubuntu:14.04
-MAINTAINER Kyle Anderson <kyle@xkyle.com>
+MAINTAINER hackru
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -17,7 +17,7 @@ RUN apt-get update && apt-get -y install xvfb x11vnc wget \
     libcups2 libexpat1 libfontconfig1 libudev-dev \
     libfreetype6 libgdk-pixbuf2.0-0 libgssapi-krb5-2 \
     libgtk2.0-0 libk5crypto3 libkrb5-3 libnss3 \
-    libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 firefox
+    libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 firefox openvpn
 
 
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
